@@ -60,7 +60,6 @@ def is_possible_to_send(file_path_in_server: str) -> bool:
 
 def handle_client(client_socket: socket.socket, client_adress: tuple):
     print(f"Connection started with {client_adress[0]}:{client_adress[1]}")
-    
     command, file_name = decode_data_received(client_socket.recv(BUFFER_SIZE))
     file_path_in_server = FILE_FOLDER_PATH + file_name
 
@@ -95,7 +94,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
 
     while True:
         client_socket, client_adress = server_socket.accept()
-
         thread = threading.Thread(
             target=handle_client,
             args=(client_socket, client_adress)
