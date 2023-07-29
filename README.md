@@ -10,3 +10,9 @@ This is a project made for my university's Computer Networks class. It implement
 
 ### Client 2
 ![Client 2](img/client_2.png)
+
+## Authors
+- [Letícia Almeida](https://github.com/Leticia-4lm31d4)
+- [Ryan Sakurai](https://github.com/ryansakurai)
+
+*(Computer Science students at UFSCar - Federal University of São Carlos)*
