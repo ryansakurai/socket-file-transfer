@@ -1,6 +1,8 @@
 import java.io.File;
 import java.util.Scanner;
 
+import entities.ServerHandler;
+
 public class Main {
     private static Scanner scanner;
     private static ServerHandler serverHandler;
