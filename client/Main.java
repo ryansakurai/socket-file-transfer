@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
+public class Main {
     private static final int BUFFER_SIZE = 1024*4;
     private static Socket socket;
     private static DataOutputStream outToServer;
@@ -22,16 +22,16 @@ public class Client {
 
 
     /**
-     *  @return String[0] -> host, String[1] -> port
+     *  @return String[0] = host, String[1] = port
      */
     private static String[] readIP() {
         while(true) {
             System.out.print("Enter server IP: ");
-            String full_ip = scanner.nextLine();
+            String fullIP = scanner.nextLine();
 
-            String[] split_ip = full_ip.split(":");
-            if(split_ip.length == 2 && isNumeric(split_ip[1]))
-                return split_ip;
+            String[] splitIP = fullIP.split(":");
+            if(splitIP.length == 2 && isNumeric(splitIP[1]))
+                return splitIP;
             else
                 System.out.println("IP must be in host:port format");
         }
@@ -83,10 +83,10 @@ public class Client {
         File file = new File(filePath);
         FileInputStream inFromFile = new FileInputStream(file);
 
-        int qt_bytes_read = 0;
+        int qtBytesRead = 0;
         byte[] buffer = new byte[BUFFER_SIZE];
-        while ((qt_bytes_read = inFromFile.read(buffer)) != -1){
-            outToServer.write(buffer, 0, qt_bytes_read);
+        while ((qtBytesRead = inFromFile.read(buffer)) != -1){
+            outToServer.write(buffer, 0, qtBytesRead);
             outToServer.flush();
         }
 
@@ -99,10 +99,10 @@ public class Client {
         File file = new File(filePath);
         FileOutputStream outToFile = new FileOutputStream(file);
 
-        int qt_bytes_read = 0;
+        int qtBytesRead = 0;
         byte[] buffer = new byte[4*1024];
-        while ((qt_bytes_read = inFromServer.read(buffer)) != -1){
-            outToFile.write(buffer, 0, qt_bytes_read);
+        while ((qtBytesRead = inFromServer.read(buffer)) != -1){
+            outToFile.write(buffer, 0, qtBytesRead);
             outToFile.flush();
         }
 

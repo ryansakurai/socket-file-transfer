@@ -58,7 +58,7 @@ def is_possible_to_send(file_path_in_server: str) -> bool:
     return os.path.exists(file_path_in_server)
 
 
-def handle_client(client_socket: socket.socket, client_adress: tuple):
+def handle_client(client_socket: socket.socket, client_adress: tuple) -> None:
     print(f"Connection started with {client_adress[0]}:{client_adress[1]}")
     command, file_name = decode_data_received(client_socket.recv(BUFFER_SIZE))
     file_path_in_server = FILE_FOLDER_PATH + file_name
