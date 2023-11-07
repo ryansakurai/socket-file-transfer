@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import exceptions.DuplicateFileException;
 import exceptions.InvalidIpException;
@@ -18,31 +17,29 @@ public class ServerHandler {
     private DataOutputStream outToServer;
     private DataInputStream inFromServer;
 
-    private boolean isNumeric(String s) {
+    public ServerHandler(String ip) throws InvalidIpException, IOException {
         try {
-            Integer.parseInt(s);
-            return true;
+            String[] splitIp = ip.split(":");
+            String host = splitIp[0];
+            int port = Integer.parseInt(splitIp[1]);
+            this.socket = new Socket(host, port);
+            this.inFromServer = new DataInputStream(socket.getInputStream());
+            this.outToServer = new DataOutputStream(socket.getOutputStream());
         }
-        catch(NumberFormatException e) {
-            return false;
+        catch(IndexOutOfBoundsException e) {
+            throw new InvalidIpException("IP must be in 'host:port' format.");
+        }
+        catch(Exception e) {
+            throw new InvalidIpException("Host not found.");
         }
     }
 
-    private String[] parseIp(String ip) throws InvalidIpException {
-        String[] splitIP = ip.split(":");
-        if(splitIP.length == 2 && isNumeric(splitIP[1]))
-            return splitIP;
-        else
-            throw new InvalidIpException("IP must be in host:port format!");
-    }
-
-    public ServerHandler(String ip) throws InvalidIpException, UnknownHostException, IOException {
-        String[] splitIp = parseIp(ip);
-        String host = splitIp[0];
-        int port = Integer.parseInt(splitIp[1]);
-        this.socket = new Socket(host, port);
-        this.inFromServer = new DataInputStream(socket.getInputStream());
-        this.outToServer = new DataOutputStream(socket.getOutputStream());
+    public void close() {
+        try {
+            socket.close();
+        }
+        catch(Exception e) {
+        }
     }
 
     private boolean isActionPossible(String action, String fileName) throws IOException {

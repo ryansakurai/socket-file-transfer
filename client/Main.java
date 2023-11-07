@@ -7,6 +7,20 @@ public class Main {
     private static Scanner scanner;
     private static ServerHandler serverHandler;
 
+    private static void connectToServer() {
+        while(true) {
+            try {
+                System.out.print("Enter server IP: ");
+                String ip = scanner.nextLine();
+                serverHandler = new ServerHandler(ip);
+                break;
+            }
+            catch(Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     private static int readOption() {
         while(true) {
             try {
@@ -17,8 +31,9 @@ public class Main {
                 if(option == 1 || option == 2)
                     return option;
             }
-            catch(NumberFormatException e) {}
-            System.out.println("Incorrect option");
+            catch(NumberFormatException e) {
+            }
+            System.out.println("Incorrect option.");
         }
     }
     
@@ -40,18 +55,7 @@ public class Main {
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
-
-        while(true) {
-            try {
-                System.out.print("Enter server IP: ");
-                String ip = scanner.nextLine();
-                serverHandler = new ServerHandler(ip);
-                break;
-            }
-            catch(Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        connectToServer();        
 
         try {
             int option = readOption();
@@ -71,6 +75,7 @@ public class Main {
         }
         finally {
             scanner.close();
+            serverHandler.close();
         }
     }
 }
