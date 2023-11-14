@@ -9,15 +9,15 @@ import java.io.IOException;
 import java.net.Socket;
 
 import exceptions.DuplicateFileException;
-import exceptions.InvalidIpException;
 
-public class ServerHandler {
+public class ServerHandler implements AutoCloseable {
+
     private final int BUFFER_SIZE = 1024*4;
     private Socket socket;
     private DataOutputStream outToServer;
     private DataInputStream inFromServer;
 
-    public ServerHandler(String ip) throws InvalidIpException, IOException {
+    public ServerHandler(String ip) throws IOException {
         try {
             String[] splitIp = ip.split(":");
             String host = splitIp[0];
@@ -27,19 +27,13 @@ public class ServerHandler {
             this.outToServer = new DataOutputStream(socket.getOutputStream());
         }
         catch(IndexOutOfBoundsException e) {
-            throw new InvalidIpException("IP must be in 'host:port' format.");
-        }
-        catch(Exception e) {
-            throw new InvalidIpException("Host not found.");
+            throw new IOException("IP must be in 'host:port' format.");
         }
     }
 
-    public void close() {
-        try {
-            socket.close();
-        }
-        catch(Exception e) {
-        }
+    @Override
+    public void close() throws IOException {
+        socket.close();
     }
 
     private boolean isActionPossible(String action, String fileName) throws IOException {
@@ -52,9 +46,10 @@ public class ServerHandler {
             throw new DuplicateFileException(file.getName());
 
         FileInputStream inFromFile = new FileInputStream(file);
+
         int qtBytesRead = 0;
         byte[] buffer = new byte[this.BUFFER_SIZE];
-        while ((qtBytesRead = inFromFile.read(buffer)) != -1){
+        while((qtBytesRead = inFromFile.read(buffer)) != -1) {
             outToServer.write(buffer, 0, qtBytesRead);
             outToServer.flush();
         }
@@ -67,12 +62,11 @@ public class ServerHandler {
         if(!isActionPossible("R", fileName))
             throw new exceptions.FileNotFoundException(fileName);
 
-        File file = new File(fileName);
-        FileOutputStream outToFile = new FileOutputStream(file);
+        FileOutputStream outToFile = new FileOutputStream(new File(fileName));
 
         int qtBytesRead = 0;
         byte[] buffer = new byte[this.BUFFER_SIZE];
-        while ((qtBytesRead = inFromServer.read(buffer)) != -1){
+        while((qtBytesRead = inFromServer.read(buffer)) != -1) {
             outToFile.write(buffer, 0, qtBytesRead);
             outToFile.flush();
         }

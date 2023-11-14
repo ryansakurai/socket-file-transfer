@@ -4,30 +4,30 @@ import java.util.Scanner;
 import entities.ServerHandler;
 
 public class Main {
-    private static Scanner scanner;
-    private static ServerHandler serverHandler;
 
-    private static void connectToServer() {
+    private static ServerHandler connectToServer(Scanner userInputScanner) {
+        ServerHandler sh;
         while(true) {
             try {
                 System.out.print("Enter server IP: ");
-                String ip = scanner.nextLine();
-                serverHandler = new ServerHandler(ip);
+                String ip = userInputScanner.nextLine();
+                sh = new ServerHandler(ip);
                 break;
             }
             catch(Exception e) {
                 System.out.println(e.getMessage());
             }
         }
+        return sh;
     }
 
-    private static int readOption() {
+    private static int readOption(Scanner userInputScanner) {
         while(true) {
             try {
                 System.out.println("[1] Send file");
                 System.out.println("[2] Receive file");
                 System.out.print("Option: ");
-                int option = Integer.parseInt(scanner.nextLine());
+                int option = Integer.parseInt(userInputScanner.nextLine());
                 if(option == 1 || option == 2)
                     return option;
             }
@@ -37,10 +37,10 @@ public class Main {
         }
     }
     
-    private static String readFilePathToSend() {
+    private static String readFilePathToSend(Scanner userInputScanner) {
         while(true) {
             System.out.print("Enter file path: ");
-            String filePath = scanner.nextLine();
+            String filePath = userInputScanner.nextLine();
             if(new File(filePath).exists())
                 return filePath;
             else
@@ -48,34 +48,31 @@ public class Main {
         }
     }
 
-    private static String readFileNameToReceive() {
+    private static String readFileNameToReceive(Scanner userInputScanner) {
         System.out.print("Enter file name: ");
-        return scanner.nextLine();
+        return userInputScanner.nextLine();
     }
 
     public static void main(String[] args) {
-        scanner = new Scanner(System.in);
-        connectToServer();        
+        try(Scanner scanner = new Scanner(System.in);
+            ServerHandler serverHandler = connectToServer(scanner)) {
 
-        try {
-            int option = readOption();
+            int option = readOption(scanner);
             if(option == 1) {
-                String filePath = readFilePathToSend();
+                String filePath = readFilePathToSend(scanner);
                 serverHandler.sendFile(new File(filePath));
                 System.out.println("File sent");
             }
             else {
-                String fileName = readFileNameToReceive();
+                String fileName = readFileNameToReceive(scanner);
                 serverHandler.receiveFile(fileName);
                 System.out.println("File received");
             }
+
         }
         catch(Exception e) {
             System.out.println(e.getMessage());
         }
-        finally {
-            scanner.close();
-            serverHandler.close();
-        }
     }
+
 }
